@@ -1,0 +1,190 @@
+-- ============================================================
+-- MEDIUM QUERIES
+-- Movie Ticket Booking System
+-- Database: movie_booking_db
+-- ============================================================
+
+USE movie_booking_db;
+
+-- 1. Customer and booking details
+SELECT c.customer_name, b.booking_id, b.ticket_amount
+FROM customers c
+INNER JOIN bookings b
+ON c.customer_id = b.customer_id;
+
+-- 2. Booking with movie details
+SELECT b.booking_id, m.movie_name, b.seats_booked, b.ticket_amount
+FROM bookings b
+INNER JOIN movies m
+ON b.movie_id = m.movie_id;
+
+-- 3. Booking with theatre details
+SELECT b.booking_id, t.theatre_name, t.city, b.show_date
+FROM bookings b
+INNER JOIN theatres t
+ON b.theatre_id = t.theatre_id;
+
+-- 4. Complete booking information
+SELECT
+    b.booking_id,
+    c.customer_name,
+    m.movie_name,
+    t.theatre_name,
+    b.show_date,
+    b.seats_booked,
+    b.ticket_amount,
+    b.booking_status,
+    b.payment_method
+FROM bookings b
+JOIN customers c ON b.customer_id = c.customer_id
+JOIN movies m ON b.movie_id = m.movie_id
+JOIN theatres t ON b.theatre_id = t.theatre_id;
+
+-- 5. Number of bookings per customer
+SELECT c.customer_name, COUNT(b.booking_id) AS total_bookings
+FROM customers c
+LEFT JOIN bookings b
+ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name;
+
+-- 6. Number of bookings per movie
+SELECT m.movie_name, COUNT(b.booking_id) AS total_bookings
+FROM movies m
+LEFT JOIN bookings b
+ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name;
+
+-- 7. Number of bookings per theatre
+SELECT t.theatre_name, COUNT(b.booking_id) AS total_bookings
+FROM theatres t
+LEFT JOIN bookings b
+ON t.theatre_id = b.theatre_id
+GROUP BY t.theatre_id, t.theatre_name;
+
+-- 8. Total revenue by movie
+SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name;
+
+-- 9. Total revenue by theatre
+SELECT t.theatre_name, SUM(b.ticket_amount) AS total_revenue
+FROM theatres t
+JOIN bookings b ON t.theatre_id = b.theatre_id
+GROUP BY t.theatre_id, t.theatre_name;
+
+-- 10. Total seats booked by movie
+SELECT m.movie_name, SUM(b.seats_booked) AS seats_booked
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name;
+
+-- 11. Average ticket amount by movie
+SELECT m.movie_name, AVG(b.ticket_amount) AS average_amount
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name;
+
+-- 12. Movies with more than one booking
+SELECT m.movie_name, COUNT(b.booking_id) AS total_bookings
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name
+HAVING COUNT(b.booking_id) > 1;
+
+-- 13. Customers with more than one booking
+SELECT c.customer_name, COUNT(b.booking_id) AS total_bookings
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+HAVING COUNT(b.booking_id) > 1;
+
+-- 14. Theatres with total booked seats above a threshold
+SELECT t.theatre_name, SUM(b.seats_booked) AS total_seats
+FROM theatres t
+JOIN bookings b ON t.theatre_id = b.theatre_id
+GROUP BY t.theatre_id, t.theatre_name
+HAVING SUM(b.seats_booked) > 10;
+
+-- 15. Booking count by payment method
+SELECT payment_method, COUNT(*) AS total_bookings
+FROM bookings
+GROUP BY payment_method;
+
+-- 16. Revenue by payment method
+SELECT payment_method, SUM(ticket_amount) AS total_revenue
+FROM bookings
+GROUP BY payment_method;
+
+-- 17. Booking count by status
+SELECT booking_status, COUNT(*) AS total_bookings
+FROM bookings
+GROUP BY booking_status;
+
+-- 18. Revenue by booking status
+SELECT booking_status, SUM(ticket_amount) AS total_revenue
+FROM bookings
+GROUP BY booking_status;
+
+-- 19. Customers with no bookings
+SELECT c.customer_id, c.customer_name
+FROM customers c
+LEFT JOIN bookings b
+ON c.customer_id = b.customer_id
+WHERE b.booking_id IS NULL;
+
+-- 20. Movies with no bookings
+SELECT m.movie_id, m.movie_name
+FROM movies m
+LEFT JOIN bookings b
+ON m.movie_id = b.movie_id
+WHERE b.booking_id IS NULL;
+
+-- 21. Theatres with no bookings
+SELECT t.theatre_id, t.theatre_name
+FROM theatres t
+LEFT JOIN bookings b
+ON t.theatre_id = b.theatre_id
+WHERE b.booking_id IS NULL;
+
+-- 22. Customers whose booking count is above the average booking count
+SELECT customer_id, total_bookings
+FROM (
+    SELECT customer_id, COUNT(*) AS total_bookings
+    FROM bookings
+    GROUP BY customer_id
+) x
+WHERE total_bookings > (
+    SELECT AVG(total_bookings)
+    FROM (
+        SELECT COUNT(*) AS total_bookings
+        FROM bookings
+        GROUP BY customer_id
+    ) y
+);
+
+-- 23. Highest ticket amount booking for each movie
+SELECT b.*
+FROM bookings b
+WHERE b.ticket_amount = (
+    SELECT MAX(b2.ticket_amount)
+    FROM bookings b2
+    WHERE b2.movie_id = b.movie_id
+);
+
+-- 24. Movies longer than the average movie duration
+SELECT *
+FROM movies
+WHERE duration_minutes > (
+    SELECT AVG(duration_minutes)
+    FROM movies
+);
+
+-- 25. Customers who made bookings above the overall average booking amount
+SELECT DISTINCT c.customer_name
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+WHERE b.ticket_amount > (
+    SELECT AVG(ticket_amount)
+    FROM bookings
+);

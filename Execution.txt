@@ -1,0 +1,63 @@
+============================================================
+EXECUTION GUIDE
+Movie Ticket Booking System
+============================================================
+
+1. Open MySQL Workbench or MySQL CLI.
+
+2. Create/select the database:
+
+   CREATE DATABASE movie_booking_db;
+   USE movie_booking_db;
+
+3. Create and insert the project data.
+
+   Use:
+   Database_Creation_Insertion.txt
+
+   OR restore the complete dump:
+   movie_booking.sql
+
+4. Verify the database:
+
+   USE movie_booking_db;
+   SHOW TABLES;
+
+5. Verify the records:
+
+   SELECT * FROM customers;
+   SELECT * FROM movies;
+   SELECT * FROM theatres;
+   SELECT * FROM bookings;
+
+6. Run the query files in order:
+
+   Simple_queries.txt
+   Medium_queries.txt
+   Hard_queries.txt
+
+7. Recommended learning order:
+
+   Simple
+      ↓
+   Medium
+      ↓
+   Hard
+
+============================================================
+IMPORTANT
+============================================================
+
+Database:
+movie_booking_db
+
+Tables:
+customers
+movies
+theatres
+bookings
+
+Relationships:
+bookings.customer_id → customers.customer_id
+bookings.movie_id    → movies.movie_id
+bookings.theatre_id  → theatres.theatre_id

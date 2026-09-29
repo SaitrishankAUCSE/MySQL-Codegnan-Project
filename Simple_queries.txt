@@ -1,0 +1,135 @@
+-- ============================================================
+-- SIMPLE QUERIES
+-- Movie Ticket Booking System
+-- Database: movie_booking_db
+-- ============================================================
+
+USE movie_booking_db;
+
+-- 1. Display all customers
+SELECT * FROM customers;
+
+-- 2. Display all movies
+SELECT * FROM movies;
+
+-- 3. Display all theatres
+SELECT * FROM theatres;
+
+-- 4. Display all bookings
+SELECT * FROM bookings;
+
+-- 5. Display customer names and cities
+SELECT customer_name, city FROM customers;
+
+-- 6. Display movie names and genres
+SELECT movie_name, genre FROM movies;
+
+-- 7. Display movie names and languages
+SELECT movie_name, language FROM movies;
+
+-- 8. Display theatre names and cities
+SELECT theatre_name, city FROM theatres;
+
+-- 9. Display bookings with ticket amounts
+SELECT booking_id, seats_booked, ticket_amount FROM bookings;
+
+-- 10. Display distinct customer cities
+SELECT DISTINCT city FROM customers;
+
+-- 11. Display distinct movie genres
+SELECT DISTINCT genre FROM movies;
+
+-- 12. Display distinct movie languages
+SELECT DISTINCT language FROM movies;
+
+-- 13. Customers from a specific city
+SELECT * FROM customers
+WHERE city = 'Visakhapatnam';
+
+-- 14. Movies with duration greater than 120 minutes
+SELECT * FROM movies
+WHERE duration_minutes > 120;
+
+-- 15. Theatres with more than 100 seats
+SELECT * FROM theatres
+WHERE total_seats > 100;
+
+-- 16. Bookings with more than 2 seats
+SELECT * FROM bookings
+WHERE seats_booked > 2;
+
+-- 17. Bookings above a specified amount
+SELECT * FROM bookings
+WHERE ticket_amount > 500;
+
+-- 18. Customers whose names start with A
+SELECT * FROM customers
+WHERE customer_name LIKE 'A%';
+
+-- 19. Movies containing the word 'Love'
+SELECT * FROM movies
+WHERE movie_name LIKE '%Love%';
+
+-- 20. Movies between 90 and 150 minutes
+SELECT * FROM movies
+WHERE duration_minutes BETWEEN 90 AND 150;
+
+-- 21. Sort movies by duration
+SELECT * FROM movies
+ORDER BY duration_minutes;
+
+-- 22. Sort movies by duration descending
+SELECT * FROM movies
+ORDER BY duration_minutes DESC;
+
+-- 23. Sort bookings by ticket amount
+SELECT * FROM bookings
+ORDER BY ticket_amount DESC;
+
+-- 24. Display the first 5 movies
+SELECT * FROM movies
+LIMIT 5;
+
+-- 25. Count customers
+SELECT COUNT(*) AS total_customers
+FROM customers;
+
+-- 26. Count movies
+SELECT COUNT(*) AS total_movies
+FROM movies;
+
+-- 27. Count theatres
+SELECT COUNT(*) AS total_theatres
+FROM theatres;
+
+-- 28. Count bookings
+SELECT COUNT(*) AS total_bookings
+FROM bookings;
+
+-- 29. Total seats booked
+SELECT SUM(seats_booked) AS total_seats_booked
+FROM bookings;
+
+-- 30. Total ticket revenue
+SELECT SUM(ticket_amount) AS total_ticket_revenue
+FROM bookings;
+
+-- 31. Average ticket amount
+SELECT AVG(ticket_amount) AS average_ticket_amount
+FROM bookings;
+
+-- 32. Highest ticket amount
+SELECT MAX(ticket_amount) AS highest_ticket_amount
+FROM bookings;
+
+-- 33. Lowest ticket amount
+SELECT MIN(ticket_amount) AS lowest_ticket_amount
+FROM bookings;
+
+-- 34. Earliest signup date
+SELECT MIN(signup_date) AS earliest_signup
+FROM customers;
+
+-- 35. Latest signup date
+SELECT MAX(signup_date) AS latest_signup
+FROM customers;

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="650" viewBox="0 0 1100 650">
+<style>
+.title{font:700 28px Arial;fill:#17324d}
+.box{fill:#f8fbff;stroke:#17324d;stroke-width:2}
+.head{fill:#17324d}
+.htext{font:700 18px Arial;fill:white}
+.text{font:15px Arial;fill:#17202a}
+.line{stroke:#355c7d;stroke-width:2}
+.label{font:700 14px Arial;fill:#355c7d}
+</style>
+<text x="550" y="45" text-anchor="middle" class="title">Movie Ticket Booking System — ER Diagram</text>
+
+<rect x="60" y="100" width="300" height="180" rx="8" class="box"/>
+<rect x="60" y="100" width="300" height="42" rx="8" class="head"/>
+<text x="210" y="128" text-anchor="middle" class="htext">CUSTOMERS</text>
+<text x="80" y="170" class="text">PK  customer_id</text>
+<text x="80" y="195" class="text">customer_name</text>
+<text x="80" y="220" class="text">gender</text>
+<text x="80" y="245" class="text">city</text>
+<text x="80" y="270" class="text">signup_date</text>
+
+<rect x="400" y="225" width="300" height="250" rx="8" class="box"/>
+<rect x="400" y="225" width="300" height="42" rx="8" class="head"/>
+<text x="550" y="253" text-anchor="middle" class="htext">BOOKINGS</text>
+<text x="420" y="295" class="text">PK  booking_id</text>
+<text x="420" y="320" class="text">FK  customer_id</text>
+<text x="420" y="345" class="text">FK  movie_id</text>
+<text x="420" y="370" class="text">FK  theatre_id</text>
+<text x="420" y="395" class="text">show_date</text>
+<text x="420" y="420" class="text">seats_booked</text>
+<text x="420" y="445" class="text">ticket_amount</text>
+<text x="420" y="470" class="text">booking_status / payment_method</text>
+
+<rect x="740" y="100" width="300" height="180" rx="8" class="box"/>
+<rect x="740" y="100" width="300" height="42" rx="8" class="head"/>
+<text x="890" y="128" text-anchor="middle" class="htext">MOVIES</text>
+<text x="760" y="170" class="text">PK  movie_id</text>
+<text x="760" y="195" class="text">movie_name</text>
+<text x="760" y="220" class="text">genre</text>
+<text x="760" y="245" class="text">language</text>
+<text x="760" y="270" class="text">duration_minutes</text>
+
+<rect x="740" y="400" width="300" height="155" rx="8" class="box"/>
+<rect x="740" y="400" width="300" height="42" rx="8" class="head"/>
+<text x="890" y="428" text-anchor="middle" class="htext">THEATRES</text>
+<text x="760" y="470" class="text">PK  theatre_id</text>
+<text x="760" y="495" class="text">theatre_name</text>
+<text x="760" y="520" class="text">city</text>
+<text x="760" y="545" class="text">total_seats</text>
+
+<line x1="360" y1="190" x2="400" y2="300" class="line"/>
+<line x1="740" y1="190" x2="700" y2="320" class="line"/>
+<line x1="740" y1="480" x2="700" y2="405" class="line"/>
+
+<text x="365" y="205" class="label">1 : N</text>
+<text x="685" y="210" class="label">1 : N</text>
+<text x="685" y="475" class="label">1 : N</text>
+</svg>

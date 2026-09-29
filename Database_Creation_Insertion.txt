@@ -1,0 +1,35 @@
+-- ============================================================
+-- DATABASE CREATION / INSERTION
+-- Movie Ticket Booking System
+-- ============================================================
+--
+-- SOURCE OF TRUTH:
+-- The complete MySQL dump is available in:
+--
+--     movie_booking.sql
+--
+-- This project keeps the original dump unchanged so that the
+-- original database structure and data are preserved.
+--
+-- To restore the complete database from the dump, use:
+--
+-- mysql -u root -p < movie_booking.sql
+--
+-- Or execute movie_booking.sql through MySQL Workbench.
+--
+-- Verified database:
+--     movie_booking_db
+--
+-- Verified tables:
+--     customers
+--     movies
+--     theatres
+--     bookings
+--
+-- Relationships:
+--     bookings.customer_id -> customers.customer_id
+--     bookings.movie_id    -> movies.movie_id
+--     bookings.theatre_id  -> theatres.theatre_id
+--
+-- Do not replace the original dump with fabricated INSERT data.
+-- ============================================================
