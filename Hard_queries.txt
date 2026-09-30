@@ -1,339 +1,184 @@
--- ============================================================
--- HARD QUERIES
--- Movie Ticket Booking System
--- Database: movie_booking_db
--- ============================================================
+# Hard SQL Queries — Movie Ticket Booking System
 
 USE movie_booking_db;
 
--- 1. Rank movies by total ticket revenue
-WITH movie_revenue AS (
-    SELECT
-        m.movie_id,
-        m.movie_name,
-        SUM(b.ticket_amount) AS total_revenue
-    FROM movies m
-    JOIN bookings b ON m.movie_id = b.movie_id
-    GROUP BY m.movie_id, m.movie_name
-)
-SELECT
-    movie_name,
-    total_revenue,
-    RANK() OVER (ORDER BY total_revenue DESC) AS revenue_rank
-FROM movie_revenue;
+-- Q1. Find the highest-revenue movie
+SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name
+ORDER BY total_revenue DESC
+LIMIT 1;
 
--- 2. Rank customers by total spending
+-- Q2. Find the customer who spent the most on tickets
+SELECT c.customer_name, SUM(b.ticket_amount) AS total_spent
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+ORDER BY total_spent DESC
+LIMIT 1;
+
+-- Q3. Find the theatre with the highest booking revenue
+SELECT t.theatre_name, SUM(b.ticket_amount) AS total_revenue
+FROM theatres t
+JOIN bookings b ON t.theatre_id = b.theatre_id
+GROUP BY t.theatre_id, t.theatre_name
+ORDER BY total_revenue DESC
+LIMIT 1;
+
+-- Q4. Find the second-highest ticket amount
+SELECT MAX(ticket_amount) AS second_highest_ticket
+FROM bookings
+WHERE ticket_amount < (
+    SELECT MAX(ticket_amount) FROM bookings
+);
+
+-- Q5. Find customers whose total spending is above the average customer spending
 WITH customer_spending AS (
-    SELECT
-        c.customer_id,
-        c.customer_name,
-        SUM(b.ticket_amount) AS total_spending
-    FROM customers c
-    JOIN bookings b ON c.customer_id = b.customer_id
-    GROUP BY c.customer_id, c.customer_name
-)
-SELECT
-    customer_name,
-    total_spending,
-    RANK() OVER (ORDER BY total_spending DESC) AS spending_rank
-FROM customer_spending;
-
--- 3. Rank theatres by revenue
-WITH theatre_revenue AS (
-    SELECT
-        t.theatre_id,
-        t.theatre_name,
-        SUM(b.ticket_amount) AS total_revenue
-    FROM theatres t
-    JOIN bookings b ON t.theatre_id = b.theatre_id
-    GROUP BY t.theatre_id, t.theatre_name
-)
-SELECT
-    theatre_name,
-    total_revenue,
-    DENSE_RANK() OVER (ORDER BY total_revenue DESC) AS revenue_rank
-FROM theatre_revenue;
-
--- 4. Top 3 movies by revenue
-WITH movie_revenue AS (
-    SELECT
-        m.movie_name,
-        SUM(b.ticket_amount) AS total_revenue
-    FROM movies m
-    JOIN bookings b ON m.movie_id = b.movie_id
-    GROUP BY m.movie_id, m.movie_name
-),
-ranked_movies AS (
-    SELECT *,
-           DENSE_RANK() OVER (ORDER BY total_revenue DESC) AS revenue_rank
-    FROM movie_revenue
-)
-SELECT *
-FROM ranked_movies
-WHERE revenue_rank <= 3;
-
--- 5. Top customer in each city
-WITH customer_city_spending AS (
-    SELECT
-        c.city,
-        c.customer_name,
-        SUM(b.ticket_amount) AS total_spending
-    FROM customers c
-    JOIN bookings b ON c.customer_id = b.customer_id
-    GROUP BY c.city, c.customer_id, c.customer_name
-),
-ranked AS (
-    SELECT *,
-           RANK() OVER (
-               PARTITION BY city
-               ORDER BY total_spending DESC
-           ) AS city_rank
-    FROM customer_city_spending
-)
-SELECT *
-FROM ranked
-WHERE city_rank = 1;
-
--- 6. Running total of booking revenue by show date
-SELECT
-    booking_id,
-    show_date,
-    ticket_amount,
-    SUM(ticket_amount) OVER (
-        ORDER BY show_date, booking_id
-    ) AS running_revenue
-FROM bookings;
-
--- 7. Compare each booking amount with the previous booking
-SELECT
-    booking_id,
-    show_date,
-    ticket_amount,
-    LAG(ticket_amount) OVER (
-        ORDER BY show_date, booking_id
-    ) AS previous_amount
-FROM bookings;
-
--- 8. Difference from the previous booking amount
-SELECT
-    booking_id,
-    ticket_amount,
-    ticket_amount -
-    LAG(ticket_amount) OVER (
-        ORDER BY show_date, booking_id
-    ) AS amount_difference
-FROM bookings;
-
--- 9. Number bookings within each customer
-SELECT
-    booking_id,
-    customer_id,
-    show_date,
-    ROW_NUMBER() OVER (
-        PARTITION BY customer_id
-        ORDER BY show_date
-    ) AS customer_booking_number
-FROM bookings;
-
--- 10. Highest-value booking for every customer
-WITH ranked_bookings AS (
-    SELECT
-        b.*,
-        ROW_NUMBER() OVER (
-            PARTITION BY customer_id
-            ORDER BY ticket_amount DESC
-        ) AS rn
-    FROM bookings b
-)
-SELECT *
-FROM ranked_bookings
-WHERE rn = 1;
-
--- 11. Customers spending above the average customer spending
-WITH customer_spending AS (
-    SELECT
-        customer_id,
-        SUM(ticket_amount) AS total_spending
+    SELECT customer_id, SUM(ticket_amount) AS total_spent
     FROM bookings
     GROUP BY customer_id
 )
-SELECT *
-FROM customer_spending
-WHERE total_spending > (
-    SELECT AVG(total_spending)
-    FROM customer_spending
-);
+SELECT c.customer_name, cs.total_spent
+FROM customer_spending cs
+JOIN customers c ON cs.customer_id = c.customer_id
+WHERE cs.total_spent > (SELECT AVG(total_spent) FROM customer_spending);
 
--- 12. Movies generating above-average revenue
-WITH movie_revenue AS (
-    SELECT
-        movie_id,
-        SUM(ticket_amount) AS total_revenue
-    FROM bookings
-    GROUP BY movie_id
-)
-SELECT *
-FROM movie_revenue
-WHERE total_revenue > (
-    SELECT AVG(total_revenue)
-    FROM movie_revenue
-);
-
--- 13. Theatre occupancy percentage based on recorded bookings
-SELECT
-    t.theatre_name,
-    t.total_seats,
-    COALESCE(SUM(b.seats_booked), 0) AS seats_booked,
-    ROUND(
-        COALESCE(SUM(b.seats_booked), 0) * 100.0 /
-        NULLIF(t.total_seats, 0),
-        2
-    ) AS occupancy_percentage
-FROM theatres t
-LEFT JOIN bookings b
-ON t.theatre_id = b.theatre_id
-GROUP BY t.theatre_id, t.theatre_name, t.total_seats;
-
--- 14. Movie booking classification using CASE
-SELECT
-    m.movie_name,
-    COUNT(b.booking_id) AS total_bookings,
-    CASE
-        WHEN COUNT(b.booking_id) >= 10 THEN 'High Demand'
-        WHEN COUNT(b.booking_id) >= 5 THEN 'Medium Demand'
-        ELSE 'Low Demand'
-    END AS demand_category
-FROM movies m
-LEFT JOIN bookings b
-ON m.movie_id = b.movie_id
-GROUP BY m.movie_id, m.movie_name;
-
--- 15. Customer booking classification
-SELECT
-    c.customer_name,
-    COUNT(b.booking_id) AS total_bookings,
-    CASE
-        WHEN COUNT(b.booking_id) >= 5 THEN 'Frequent'
-        WHEN COUNT(b.booking_id) >= 2 THEN 'Regular'
-        ELSE 'Occasional'
-    END AS customer_category
-FROM customers c
-LEFT JOIN bookings b
-ON c.customer_id = b.customer_id
-GROUP BY c.customer_id, c.customer_name;
-
--- 16. Find the second-highest ticket amount
-SELECT MAX(ticket_amount) AS second_highest_amount
-FROM bookings
-WHERE ticket_amount < (
-    SELECT MAX(ticket_amount)
-    FROM bookings
-);
-
--- 17. Find bookings with the maximum number of seats
-SELECT *
-FROM bookings
-WHERE seats_booked = (
-    SELECT MAX(seats_booked)
-    FROM bookings
-);
-
--- 18. Find customers who booked every movie they have interacted with
-SELECT c.customer_id, c.customer_name
-FROM customers c
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM movies m
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM bookings b
-        WHERE b.customer_id = c.customer_id
-          AND b.movie_id = m.movie_id
-    )
-);
-
--- 19. Find movies booked by customers from more than one city
-SELECT
-    m.movie_name,
-    COUNT(DISTINCT c.city) AS cities_count
+-- Q6. Rank movies by total revenue
+SELECT m.movie_name,
+       SUM(b.ticket_amount) AS total_revenue,
+       DENSE_RANK() OVER (ORDER BY SUM(b.ticket_amount) DESC) AS revenue_rank
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
-JOIN customers c ON b.customer_id = c.customer_id
-GROUP BY m.movie_id, m.movie_name
-HAVING COUNT(DISTINCT c.city) > 1;
-
--- 20. Monthly booking revenue
-SELECT
-    DATE_FORMAT(show_date, '%Y-%m') AS booking_month,
-    SUM(ticket_amount) AS monthly_revenue,
-    COUNT(*) AS total_bookings
-FROM bookings
-GROUP BY DATE_FORMAT(show_date, '%Y-%m')
-ORDER BY booking_month;
-
--- 21. Daily booking revenue
-SELECT
-    DATE(show_date) AS show_day,
-    SUM(ticket_amount) AS daily_revenue,
-    COUNT(*) AS total_bookings
-FROM bookings
-GROUP BY DATE(show_date)
-ORDER BY show_day;
-
--- 22. Most popular payment method
-WITH payment_counts AS (
-    SELECT
-        payment_method,
-        COUNT(*) AS usage_count
-    FROM bookings
-    GROUP BY payment_method
-)
-SELECT *
-FROM payment_counts
-WHERE usage_count = (
-    SELECT MAX(usage_count)
-    FROM payment_counts
-);
-
--- 23. Movies whose revenue is greater than every theatre's average booking amount
-WITH movie_revenue AS (
-    SELECT movie_id, SUM(ticket_amount) AS total_revenue
-    FROM bookings
-    GROUP BY movie_id
-),
-theatre_avg AS (
-    SELECT theatre_id, AVG(ticket_amount) AS avg_amount
-    FROM bookings
-    GROUP BY theatre_id
-)
-SELECT m.movie_name, mr.total_revenue
-FROM movie_revenue mr
-JOIN movies m ON m.movie_id = mr.movie_id
-WHERE mr.total_revenue > ALL (
-    SELECT avg_amount
-    FROM theatre_avg
-);
-
--- 24. Booking share by payment method
-SELECT
-    payment_method,
-    COUNT(*) AS booking_count,
-    ROUND(
-        COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (),
-        2
-    ) AS booking_percentage
-FROM bookings
-GROUP BY payment_method;
-
--- 25. Booking share by movie
-SELECT
-    m.movie_name,
-    COUNT(b.booking_id) AS booking_count,
-    ROUND(
-        COUNT(b.booking_id) * 100.0 /
-        SUM(COUNT(b.booking_id)) OVER (),
-        2
-    ) AS booking_percentage
-FROM movies m
-LEFT JOIN bookings b ON m.movie_id = b.movie_id
 GROUP BY m.movie_id, m.movie_name;
+
+-- Q7. Rank customers by total spending
+SELECT c.customer_name,
+       SUM(b.ticket_amount) AS total_spent,
+       DENSE_RANK() OVER (ORDER BY SUM(b.ticket_amount) DESC) AS spending_rank
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name;
+
+-- Q8. Find the top 3 movies by revenue
+SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name
+ORDER BY total_revenue DESC
+LIMIT 3;
+
+-- Q9. Find the top 3 customers by total spending
+SELECT c.customer_name, SUM(b.ticket_amount) AS total_spent
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+ORDER BY total_spent DESC
+LIMIT 3;
+
+-- Q10. Find the most-booked movie by number of bookings
+SELECT m.movie_name, COUNT(b.booking_id) AS booking_count
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name
+ORDER BY booking_count DESC
+LIMIT 1;
+
+-- Q11. Find the customer with the highest number of bookings
+SELECT c.customer_name, COUNT(b.booking_id) AS booking_count
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+ORDER BY booking_count DESC
+LIMIT 1;
+
+-- Q12. Find the movie with the highest average ticket amount
+SELECT m.movie_name, AVG(b.ticket_amount) AS average_ticket
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name
+ORDER BY average_ticket DESC
+LIMIT 1;
+
+-- Q13. Find each movie's percentage contribution to total revenue
+SELECT m.movie_name,
+       SUM(b.ticket_amount) AS movie_revenue,
+       ROUND(SUM(b.ticket_amount) * 100.0 /
+             (SELECT SUM(ticket_amount) FROM bookings), 2) AS revenue_percentage
+FROM movies m
+JOIN bookings b ON m.movie_id = b.movie_id
+GROUP BY m.movie_id, m.movie_name;
+
+-- Q14. Find the busiest theatre based on total seats booked
+SELECT t.theatre_name, SUM(b.seats_booked) AS total_seats_booked
+FROM theatres t
+JOIN bookings b ON t.theatre_id = b.theatre_id
+GROUP BY t.theatre_id, t.theatre_name
+ORDER BY total_seats_booked DESC
+LIMIT 1;
+
+-- Q15. Find customers who booked more seats than the average booking
+SELECT c.customer_name, SUM(b.seats_booked) AS total_seats_booked
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+HAVING SUM(b.seats_booked) > (SELECT AVG(seats_booked) FROM bookings);
+
+-- Q16. Find the highest-revenue movie in each language
+WITH movie_revenue AS (
+    SELECT m.movie_id, m.movie_name, m.language,
+           SUM(b.ticket_amount) AS total_revenue
+    FROM movies m
+    JOIN bookings b ON m.movie_id = b.movie_id
+    GROUP BY m.movie_id, m.movie_name, m.language
+), ranked_movies AS (
+    SELECT *,
+           ROW_NUMBER() OVER (
+               PARTITION BY language
+               ORDER BY total_revenue DESC
+           ) AS rn
+    FROM movie_revenue
+)
+SELECT movie_name, language, total_revenue
+FROM ranked_movies
+WHERE rn = 1;
+
+-- Q17. Find repeat customers (more than one booking)
+SELECT c.customer_name, COUNT(b.booking_id) AS booking_count
+FROM customers c
+JOIN bookings b ON c.customer_id = b.customer_id
+GROUP BY c.customer_id, c.customer_name
+HAVING COUNT(b.booking_id) > 1;
+
+-- Q18. Find the highest-value booking for each booking status
+WITH ranked_bookings AS (
+    SELECT booking_status, booking_id, ticket_amount,
+           ROW_NUMBER() OVER (
+               PARTITION BY booking_status
+               ORDER BY ticket_amount DESC
+           ) AS rn
+    FROM bookings
+)
+SELECT booking_status, booking_id, ticket_amount
+FROM ranked_bookings
+WHERE rn = 1;
+
+-- Q19. Compare completed-booking revenue with cancelled-booking revenue
+SELECT booking_status, SUM(ticket_amount) AS total_revenue
+FROM bookings
+WHERE booking_status IN ('Completed', 'Cancelled')
+GROUP BY booking_status;
+
+-- Q20. Show each customer's latest booking using a window function
+WITH ranked_bookings AS (
+    SELECT b.customer_id, b.booking_id, b.show_date, b.ticket_amount,
+           ROW_NUMBER() OVER (
+               PARTITION BY b.customer_id
+               ORDER BY b.show_date DESC
+           ) AS rn
+    FROM bookings b
+)
+SELECT c.customer_name, rb.booking_id, rb.show_date, rb.ticket_amount
+FROM ranked_bookings rb
+JOIN customers c ON rb.customer_id = c.customer_id
+WHERE rb.rn = 1;
