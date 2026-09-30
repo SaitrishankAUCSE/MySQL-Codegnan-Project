@@ -51,7 +51,7 @@ This project focuses on:
 | `theatres` | Stores theatre information |
 | `bookings` | Stores ticket booking information |
 
-### Customers
+### 👤 Customers
 
 | Column | Description |
 |---|---|
@@ -61,7 +61,7 @@ This project focuses on:
 | `city` | Customer city |
 | `signup_date` | Customer signup date |
 
-### Movies
+### 🎬 Movies
 
 | Column | Description |
 |---|---|
@@ -71,7 +71,7 @@ This project focuses on:
 | `language` | Movie language |
 | `duration_minutes` | Movie duration in minutes |
 
-### Theatres
+### 🏢 Theatres
 
 | Column | Description |
 |---|---|
@@ -80,7 +80,7 @@ This project focuses on:
 | `city` | Theatre city |
 | `total_seats` | Total theatre seats |
 
-### Bookings
+### 🎟️ Bookings
 
 | Column | Description |
 |---|---|
@@ -118,245 +118,6 @@ This project focuses on:
                      │        │
               ┌──────▼───┐ ┌──▼────────────┐
               │  MOVIES  │ │   THEATRES    │
-              │movie_id  │ │ theatre_id    │
+              │ movie_id │ │  theatre_id   │
               │   (PK)   │ │     (PK)      │
               └──────────┘ └───────────────┘
-```
-
-### Primary Relationships
-
-1. `bookings.customer_id` → `customers.customer_id`
-2. `bookings.movie_id` → `movies.movie_id`
-3. `bookings.theatre_id` → `theatres.theatre_id`
-
-Each customer, movie, and theatre can be associated with multiple bookings.
-
----
-
-## 🛠️ Technologies Used
-
-- **Database:** MySQL
-- **Language:** SQL
-- **Tools:** MySQL Workbench / MySQL CLI
-- **Database Type:** Relational Database
-
----
-
-## 📊 SQL Analysis
-
-The SQL practice is divided into three levels.
-
-### 🟢 Simple Queries
-
-Basic SQL operations:
-
-- SELECT
-- WHERE
-- LIKE
-- BETWEEN
-- ORDER BY
-- LIMIT
-- DISTINCT
-- COUNT()
-- SUM()
-- AVG()
-- MIN()
-- MAX()
-- String functions
-- Date functions
-
-### 🟡 Medium Queries
-
-Intermediate relational analysis:
-
-- INNER JOIN
-- LEFT JOIN
-- RIGHT JOIN
-- CROSS JOIN
-- GROUP BY
-- HAVING
-- Aggregate functions
-- CASE
-- Subqueries
-- Multi-table analysis
-
-### 🔴 Hard Queries
-
-Advanced SQL analysis:
-
-- Nested subqueries
-- Correlated subqueries
-- CTEs
-- Window functions
-- RANK()
-- DENSE_RANK()
-- ROW_NUMBER()
-- PARTITION BY
-- Complex aggregations
-- Business-oriented analysis
-
----
-
-## 💼 Business Questions Answered
-
-The project can be used to answer questions such as:
-
-- Which movies have the most bookings?
-- Which customers have made the most bookings?
-- Which theatres receive the most bookings?
-- What is the total ticket revenue?
-- What is the average booking amount?
-- Which movie generates the highest ticket revenue?
-- Which city has the most customers?
-- Which payment method is used most frequently?
-- How many seats have been booked for each movie?
-- Which theatres have the highest booking activity?
-- Which customers have never made a booking?
-- Which movies have no bookings?
-- What is the average number of seats per booking?
-- What are the highest-value bookings?
-- How does booking activity vary by date?
-
----
-
-## 📁 Repository Structure
-
-```text
-MySQL-Codegnan-Project/
-│
-├── README.md
-├── movie_booking.sql
-│
-├── Database_Creation_Insertion.txt
-├── Execution.txt
-├── Simple_queries.txt
-├── Medium_queries.txt
-├── Hard_queries.txt
-│
-└── ER-Diagram.svg
-```
-
-`movie_booking.sql` is retained as the complete database dump/backup.
-
-The additional files organize the project for easier learning, execution, and interview review.
-
----
-
-## 🚀 How to Run the Project
-
-### Step 1 — Install MySQL
-
-Install MySQL Server and optionally MySQL Workbench.
-
-### Step 2 — Open MySQL
-
-Open MySQL Workbench or MySQL CLI.
-
-### Step 3 — Create / select the database
-
-```sql
-CREATE DATABASE movie_booking_db;
-USE movie_booking_db;
-```
-
-### Step 4 — Create and populate the tables
-
-Run the SQL statements from:
-
-```text
-Database_Creation_Insertion.txt
-```
-
-Alternatively, restore the complete database using:
-
-```text
-movie_booking.sql
-```
-
-### Step 5 — Verify the tables
-
-```sql
-USE movie_booking_db;
-
-SHOW TABLES;
-```
-
-Expected tables:
-
-```text
-bookings
-customers
-movies
-theatres
-```
-
-### Step 6 — View the data
-
-```sql
-SELECT * FROM customers;
-SELECT * FROM movies;
-SELECT * FROM theatres;
-SELECT * FROM bookings;
-```
-
-### Step 7 — Run the SQL analysis
-
-Execute the queries progressively:
-
-```text
-Simple → Medium → Hard
-```
-
----
-
-## 🎓 Learning Outcomes
-
-This project provides practice with:
-
-- Relational database design
-- Primary Keys
-- Foreign Keys
-- One-to-many relationships
-- CRUD operations
-- Constraints
-- Filtering
-- Sorting
-- Aggregate functions
-- JOINs
-- GROUP BY
-- HAVING
-- Subqueries
-- CTEs
-- Window functions
-- SQL-based business analysis
-
----
-
-## 🔮 Possible Future Improvements
-
-The database can be extended with:
-
-- Seat-level booking management
-- Movie show schedules
-- Individual theatre screens
-- Ticket pricing by seat type
-- Offers and discounts
-- Cancellation/refund tracking
-- Reviews and ratings
-- Food and beverage orders
-- Online payment transactions
-- Theatre-wise occupancy analysis
-
----
-
-## 👨‍💻 Project Summary
-
-The Movie Ticket Booking System is a practical MySQL project that models customers, movies, theatres, and bookings in a connected relational database.
-
-It progresses from basic SQL operations to multi-table analysis and advanced SQL techniques, making it useful for SQL practice, database learning, and technical interview preparation.
-
----
-
-## ⭐ Skills Demonstrated
-
-**MySQL · SQL · Database Design · Primary Keys · Foreign Keys · Joins · Aggregation · Subqueries · CTEs · Window Functions · Relational Database Management**
