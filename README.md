@@ -19,6 +19,8 @@ The database contains four main entities:
 
 The `bookings` table connects customers, movies, and theatres through foreign-key relationships.
 
+The project progresses from basic SQL operations to multi-table analysis and advanced SQL techniques, allowing booking data to be analyzed from customer, movie, theatre, payment, and revenue perspectives.
+
 ---
 
 ## 🎯 Objectives
@@ -106,7 +108,7 @@ The following ER diagram represents the complete database design of the Movie Ti
 
 ### Diagrammatic ER Structure
 
-The database relationships can also be represented using the following ER diagram:
+The same database structure is also represented below using a Mermaid ER diagram.
 
 ```mermaid
 erDiagram
