@@ -104,132 +104,48 @@ The following ER diagram represents the complete database design of the Movie Ti
   <img src="ER-Diagram.png" alt="Movie Ticket Booking System ER Diagram" width="100%">
 </p>
 
-### Primary Relationships
+### Diagrammatic ER Structure
 
-| Relationship | Cardinality | Description |
-|---|---|---|
-| Customers → Bookings | 1 : N | One customer can make multiple bookings |
-| Movies → Bookings | 1 : N | One movie can have multiple bookings |
-| Theatres → Bookings | 1 : N | One theatre can have multiple bookings |
+The database relationships can also be represented using the following ER diagram:
 
-### Foreign Key Relationships
+```mermaid
+erDiagram
 
-- `bookings.customer_id` → `customers.customer_id`
-- `bookings.movie_id` → `movies.movie_id`
-- `bookings.theatre_id` → `theatres.theatre_id`
+    CUSTOMERS ||--o{ BOOKINGS : makes
+    MOVIES ||--o{ BOOKINGS : refers_to
+    THEATRES ||--o{ BOOKINGS : held_at
 
-Primary keys uniquely identify records, while foreign keys maintain relationships between the related tables and help preserve referential integrity.
+    CUSTOMERS {
+        int customer_id PK
+        varchar customer_name
+        varchar gender
+        varchar city
+        date signup_date
+    }
 
----
+    MOVIES {
+        int movie_id PK
+        varchar movie_name
+        varchar genre
+        varchar language
+        int duration_minutes
+    }
 
-## 🛠️ Technologies Used
+    THEATRES {
+        int theatre_id PK
+        varchar theatre_name
+        varchar city
+        int total_seats
+    }
 
-- **Database:** MySQL
-- **Language:** SQL
-- **Tools:** MySQL Workbench / MySQL CLI
-- **Version Control:** Git / GitHub
-- **Database Type:** Relational Database
-
----
-
-## 📊 SQL Analysis
-
-The SQL practice is divided into three levels containing a total of **60 SQL queries**.
-
-### 🟢 Simple Queries — 20
-
-Basic SQL operations:
-
-- SELECT
-- WHERE
-- LIKE
-- BETWEEN
-- ORDER BY
-- LIMIT
-- DISTINCT
-- COUNT()
-- SUM()
-- AVG()
-- MIN()
-- MAX()
-- String functions
-- Date functions
-
-### 🟡 Medium Queries — 20
-
-Intermediate relational analysis:
-
-- INNER JOIN
-- LEFT JOIN
-- RIGHT JOIN
-- CROSS JOIN
-- GROUP BY
-- HAVING
-- Aggregate functions
-- CASE
-- Subqueries
-- Multi-table analysis
-
-### 🔴 Hard Queries — 20
-
-Advanced SQL analysis:
-
-- Nested subqueries
-- Correlated subqueries
-- CTEs
-- Window functions
-- RANK()
-- DENSE_RANK()
-- ROW_NUMBER()
-- PARTITION BY
-- Complex aggregations
-- Business-oriented analysis
-
-### Query Distribution
-
-| Level | Number of Queries |
-|---|---:|
-| 🟢 Simple | 20 |
-| 🟡 Medium | 20 |
-| 🔴 Hard | 20 |
-| **Total** | **60** |
-
----
-
-## 💼 Business Questions Answered
-
-The project can be used to answer questions such as:
-
-- Which movies have the most bookings?
-- Which customers have made the most bookings?
-- Which theatres receive the most bookings?
-- What is the total ticket revenue?
-- What is the average booking amount?
-- Which movie generates the highest ticket revenue?
-- Which city has the most customers?
-- Which payment method is used most frequently?
-- How many seats have been booked for each movie?
-- Which theatres have the highest booking activity?
-- Which customers have never made a booking?
-- Which movies have no bookings?
-- What is the average number of seats per booking?
-- What are the highest-value bookings?
-- How does booking activity vary by date?
-
----
-
-## 📁 Repository Structure
-
-```text
-MySQL-Codegnan-Project/
-│
-├── README.md
-├── movie_booking.sql
-│
-├── Database_Creation_Insertion.txt
-├── Execution.txt
-├── Simple_queries.txt
-├── Medium_queries.txt
-├── Hard_queries.txt
-│
-└── ER-Diagram.png
+    BOOKINGS {
+        int booking_id PK
+        int customer_id FK
+        int movie_id FK
+        int theatre_id FK
+        datetime show_date
+        int seats_booked
+        decimal ticket_amount
+        varchar booking_status
+        varchar payment_method
+    }
