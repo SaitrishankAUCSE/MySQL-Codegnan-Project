@@ -23,6 +23,23 @@ The project progresses from basic SQL operations to multi-table analysis and adv
 
 ---
 
+## ✨ Features
+
+The project includes:
+
+- 👤 Customer information management
+- 🎬 Movie information management
+- 🏢 Theatre information management
+- 🎟️ Movie ticket booking records
+- 💰 Ticket revenue analysis
+- 💳 Payment-method analysis
+- 📊 Booking and customer analysis
+- 🔎 Data filtering and sorting
+- 🔗 Multi-table relational analysis using JOINs
+- 📈 Advanced SQL analysis using subqueries, CTEs, and window functions
+
+---
+
 ## 🎯 Objectives
 
 This project focuses on:
