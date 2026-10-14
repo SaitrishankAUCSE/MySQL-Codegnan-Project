@@ -5,18 +5,23 @@ Movie Ticket Booking System
 
 1. Open MySQL Workbench or MySQL CLI.
 
-2. Create/select the database:
+2. Create the database:
 
    CREATE DATABASE movie_booking_db;
-   USE movie_booking_db;
 
-3. Create and insert the project data.
+3. Restore the complete database dump.
 
-   Use:
-   Database_Creation_Insertion.txt
+   From Command Prompt, run:
 
-   OR restore the complete dump:
-   movie_booking.sql
+   mysql -u root -p movie_booking_db < movie_booking.sql
+
+   On Windows, if mysql is not recognized, use the full path:
+
+   "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p movie_booking_db < movie_booking.sql
+
+   Enter your MySQL password when prompted.
+
+   Note: The database dump contains the table definitions, data, and relationships required for restoration.
 
 4. Verify the database:
 
@@ -25,10 +30,10 @@ Movie Ticket Booking System
 
 5. Verify the records:
 
-   SELECT * FROM customers;
-   SELECT * FROM movies;
-   SELECT * FROM theatres;
-   SELECT * FROM bookings;
+   SELECT COUNT(*) FROM customers;
+   SELECT COUNT(*) FROM movies;
+   SELECT COUNT(*) FROM theatres;
+   SELECT COUNT(*) FROM bookings;
 
 6. Run the query files in order:
 
@@ -61,3 +66,7 @@ Relationships:
 bookings.customer_id → customers.customer_id
 bookings.movie_id    → movies.movie_id
 bookings.theatre_id  → theatres.theatre_id
+
+The file movie_booking.sql is the recommended method for restoring the database.
+
+Database_Creation_Insertion.txt may be used as an alternative only if it contains the required executable SQL statements.
