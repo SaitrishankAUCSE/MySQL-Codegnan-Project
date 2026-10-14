@@ -2,26 +2,29 @@
 
 USE movie_booking_db;
 
--- Q1. Find the highest-revenue movie
+-- Q1. Find the highest-revenue movie from completed bookings
 SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name
 ORDER BY total_revenue DESC
 LIMIT 1;
 
--- Q2. Find the customer who spent the most on tickets
+-- Q2. Find the customer who spent the most on completed bookings
 SELECT c.customer_name, SUM(b.ticket_amount) AS total_spent
 FROM customers c
 JOIN bookings b ON c.customer_id = b.customer_id
+WHERE b.booking_status = 'Completed'
 GROUP BY c.customer_id, c.customer_name
 ORDER BY total_spent DESC
 LIMIT 1;
 
--- Q3. Find the theatre with the highest booking revenue
+-- Q3. Find the theatre with the highest revenue from completed bookings
 SELECT t.theatre_name, SUM(b.ticket_amount) AS total_revenue
 FROM theatres t
 JOIN bookings b ON t.theatre_id = b.theatre_id
+WHERE b.booking_status = 'Completed'
 GROUP BY t.theatre_id, t.theatre_name
 ORDER BY total_revenue DESC
 LIMIT 1;
@@ -33,45 +36,57 @@ WHERE ticket_amount < (
     SELECT MAX(ticket_amount) FROM bookings
 );
 
--- Q5. Find customers whose total spending is above the average customer spending
+-- Q5. Find customers whose completed-booking spending is above average
 WITH customer_spending AS (
     SELECT customer_id, SUM(ticket_amount) AS total_spent
     FROM bookings
+    WHERE booking_status = 'Completed'
     GROUP BY customer_id
 )
 SELECT c.customer_name, cs.total_spent
 FROM customer_spending cs
 JOIN customers c ON cs.customer_id = c.customer_id
-WHERE cs.total_spent > (SELECT AVG(total_spent) FROM customer_spending);
+WHERE cs.total_spent > (
+    SELECT AVG(total_spent)
+    FROM customer_spending
+);
 
--- Q6. Rank movies by total revenue
+-- Q6. Rank movies by revenue from completed bookings
 SELECT m.movie_name,
        SUM(b.ticket_amount) AS total_revenue,
-       DENSE_RANK() OVER (ORDER BY SUM(b.ticket_amount) DESC) AS revenue_rank
+       DENSE_RANK() OVER (
+           ORDER BY SUM(b.ticket_amount) DESC
+       ) AS revenue_rank
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name;
 
--- Q7. Rank customers by total spending
+-- Q7. Rank customers by spending on completed bookings
 SELECT c.customer_name,
        SUM(b.ticket_amount) AS total_spent,
-       DENSE_RANK() OVER (ORDER BY SUM(b.ticket_amount) DESC) AS spending_rank
+       DENSE_RANK() OVER (
+           ORDER BY SUM(b.ticket_amount) DESC
+       ) AS spending_rank
 FROM customers c
 JOIN bookings b ON c.customer_id = b.customer_id
+WHERE b.booking_status = 'Completed'
 GROUP BY c.customer_id, c.customer_name;
 
--- Q8. Find the top 3 movies by revenue
+-- Q8. Find the top 3 movies by revenue from completed bookings
 SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name
 ORDER BY total_revenue DESC
 LIMIT 3;
 
--- Q9. Find the top 3 customers by total spending
+-- Q9. Find the top 3 customers by spending on completed bookings
 SELECT c.customer_name, SUM(b.ticket_amount) AS total_spent
 FROM customers c
 JOIN bookings b ON c.customer_id = b.customer_id
+WHERE b.booking_status = 'Completed'
 GROUP BY c.customer_id, c.customer_name
 ORDER BY total_spent DESC
 LIMIT 3;
@@ -100,13 +115,19 @@ GROUP BY m.movie_id, m.movie_name
 ORDER BY average_ticket DESC
 LIMIT 1;
 
--- Q13. Find each movie's percentage contribution to total revenue
+-- Q13. Find each movie's percentage contribution to completed-booking revenue
 SELECT m.movie_name,
        SUM(b.ticket_amount) AS movie_revenue,
-       ROUND(SUM(b.ticket_amount) * 100.0 /
-             (SELECT SUM(ticket_amount) FROM bookings), 2) AS revenue_percentage
+       ROUND(
+           SUM(b.ticket_amount) * 100.0 /
+           (SELECT SUM(ticket_amount)
+            FROM bookings
+            WHERE booking_status = 'Completed'),
+           2
+       ) AS revenue_percentage
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name;
 
 -- Q14. Find the busiest theatre based on total seats booked
@@ -124,12 +145,13 @@ JOIN bookings b ON c.customer_id = b.customer_id
 GROUP BY c.customer_id, c.customer_name
 HAVING SUM(b.seats_booked) > (SELECT AVG(seats_booked) FROM bookings);
 
--- Q16. Find the highest-revenue movie in each language
+-- Q16. Find the highest-revenue movie in each language from completed bookings
 WITH movie_revenue AS (
     SELECT m.movie_id, m.movie_name, m.language,
            SUM(b.ticket_amount) AS total_revenue
     FROM movies m
     JOIN bookings b ON m.movie_id = b.movie_id
+    WHERE b.booking_status = 'Completed'
     GROUP BY m.movie_id, m.movie_name, m.language
 ), ranked_movies AS (
     SELECT *,
@@ -163,8 +185,9 @@ SELECT booking_status, booking_id, ticket_amount
 FROM ranked_bookings
 WHERE rn = 1;
 
--- Q19. Compare completed-booking revenue with cancelled-booking revenue
-SELECT booking_status, SUM(ticket_amount) AS total_revenue
+-- Q19. Compare ticket amounts for completed and cancelled bookings
+SELECT booking_status,
+       SUM(ticket_amount) AS total_ticket_amount
 FROM bookings
 WHERE booking_status IN ('Completed', 'Cancelled')
 GROUP BY booking_status;

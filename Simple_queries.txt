@@ -79,6 +79,7 @@ LIMIT 10;
 SELECT COUNT(*) AS total_customers
 FROM customers;
 
--- Q20. Find the total ticket revenue
+-- Q20. Find the total revenue from completed bookings
 SELECT SUM(ticket_amount) AS total_revenue
-FROM bookings;
+FROM bookings
+WHERE booking_status = 'Completed';

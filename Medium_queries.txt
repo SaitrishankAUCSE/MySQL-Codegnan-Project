@@ -31,10 +31,11 @@ FROM customers c
 LEFT JOIN bookings b ON c.customer_id = b.customer_id
 GROUP BY c.customer_id, c.customer_name;
 
--- Q6. Calculate total revenue by movie
+-- Q6. Calculate total revenue from completed bookings by movie
 SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name;
 
 -- Q7. Calculate total seats booked for each movie
@@ -55,13 +56,13 @@ JOIN bookings b ON t.theatre_id = b.theatre_id
 GROUP BY t.theatre_id, t.theatre_name
 HAVING COUNT(b.booking_id) > 5;
 
--- Q10. Find movies with total revenue greater than 10000
+-- Q10. Find movies with completed-booking revenue greater than 10000
 SELECT m.movie_name, SUM(b.ticket_amount) AS total_revenue
 FROM movies m
 JOIN bookings b ON m.movie_id = b.movie_id
+WHERE b.booking_status = 'Completed'
 GROUP BY m.movie_id, m.movie_name
 HAVING SUM(b.ticket_amount) > 10000;
-
 -- Q11. Find the highest ticket amount
 SELECT MAX(ticket_amount) AS highest_ticket_amount
 FROM bookings;
@@ -112,9 +113,10 @@ SELECT booking_status, COUNT(*) AS total_bookings
 FROM bookings
 GROUP BY booking_status;
 
--- Q20. Find total revenue by theatre city
+-- Q20. Find total revenue from completed bookings by theatre city
 SELECT t.city, SUM(b.ticket_amount) AS total_revenue
 FROM theatres t
 JOIN bookings b ON t.theatre_id = b.theatre_id
+WHERE b.booking_status = 'Completed'
 GROUP BY t.city
 ORDER BY total_revenue DESC;
