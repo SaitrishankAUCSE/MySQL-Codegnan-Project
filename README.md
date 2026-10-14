@@ -266,14 +266,11 @@ MySQL-Codegnan-Project/
 │
 ├── README.md
 ├── movie_booking.sql
-│
 ├── Database_Restore_Guide.txt
 ├── Execution.txt
-│
 ├── Simple_queries.txt
 ├── Medium_queries.txt
 ├── Hard_queries.txt
-│
 └── ER-Diagram.png
 ```
 
@@ -291,8 +288,6 @@ MySQL-Codegnan-Project/
 | `ER-Diagram.png` | Visual representation of the database relationships |
 
 **Recommended setup method:** Use `movie_booking.sql` to restore the complete database. The restore guide and execution guide provide supporting instructions, while the query files organize SQL practice by difficulty.
-
----
 
 ## 🚀 How to Run the Project
 
