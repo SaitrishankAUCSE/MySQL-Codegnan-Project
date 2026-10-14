@@ -4,7 +4,7 @@ A MySQL-based relational database project for managing customers, movies, theatr
 
 This project demonstrates practical SQL skills through relational database design, primary keys, foreign keys, constraints, data analysis, JOINs, aggregate functions, subqueries, Common Table Expressions (CTEs), and window functions.
 
-**Project Highlights**
+## 🚀 Project Highlights
 
 - **Database:** `movie_booking_db`
 - **Tables:** 4
@@ -244,7 +244,7 @@ The SQL queries can be used to investigate practical questions such as:
 - Which theatres receive the most bookings?
 - What is the total ticket amount across bookings?
 - What is the average booking amount?
-- Which movies generate the highest ticket amounts?
+- Which movies have the highest ticket amounts?
 - Which cities have the most customers?
 - Which payment methods are used most frequently?
 - How many seats have been booked for each movie?
@@ -267,7 +267,7 @@ MySQL-Codegnan-Project/
 ├── README.md
 ├── movie_booking.sql
 │
-├── Database_Creation_Insertion.txt
+├── Database_Restore_Guide.txt
 ├── Execution.txt
 │
 ├── Simple_queries.txt
@@ -283,14 +283,14 @@ MySQL-Codegnan-Project/
 |---|---|
 | `README.md` | Project overview, database documentation, and setup instructions |
 | `movie_booking.sql` | Complete database dump containing table definitions and data for restoration |
-| `Database_Creation_Insertion.txt` | Supporting database creation and insertion reference notes |
+| `Database_Restore_Guide.txt` | Instructions for creating and restoring the database |
 | `Execution.txt` | Guide for setting up the database and executing the project |
 | `Simple_queries.txt` | 20 basic SQL queries |
 | `Medium_queries.txt` | 20 intermediate SQL queries |
 | `Hard_queries.txt` | 20 advanced SQL queries |
 | `ER-Diagram.png` | Visual representation of the database relationships |
 
-**Recommended setup method:** Use `movie_booking.sql` to restore the complete database. The other files provide supporting documentation and organized SQL practice.
+**Recommended setup method:** Use `movie_booking.sql` to restore the complete database. The restore guide and execution guide provide supporting instructions, while the query files organize SQL practice by difficulty.
 
 ---
 
@@ -344,6 +344,8 @@ Enter your MySQL password when prompted.
 Adjust the path if MySQL is installed in a different directory.
 
 **Important:** The dump recreates project tables with the same names. Back up any existing data in those tables before restoring over a database that contains information you need to keep.
+
+For additional instructions, see `Database_Restore_Guide.txt` and `Execution.txt`.
 
 ### Step 4 — Verify the Database
 
@@ -466,7 +468,7 @@ The **Movie Ticket Booking System** is a practical MySQL project that models cus
 
 It combines database design, referential integrity, and 60 SQL queries across three difficulty levels. The project provides hands-on practice with fundamental and advanced SQL concepts while exploring business-oriented questions involving bookings, customers, movies, theatres, and ticket amounts.
 
-The repository includes the SQL database dump, query files, execution guide, and ER diagram to make the project easier to understand, restore, and explore.
+The repository includes the SQL database dump, query files, restore guide, execution guide, and ER diagram to make the project easier to understand, restore, and explore.
 
 ---
 
