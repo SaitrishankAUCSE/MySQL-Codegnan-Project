@@ -1,0 +1,120 @@
+DATABASE RESTORE GUIDE
+Movie Ticket Booking System
+============================================================
+
+PURPOSE
+------------------------------------------------------------
+
+This file provides instructions for restoring the Movie Ticket
+Booking System database.
+
+This is a documentation file, not an executable SQL script.
+
+The complete database schema and dataset are provided in:
+
+    movie_booking.sql
+
+Database:
+    movie_booking_db
+
+Tables:
+    customers
+    movies
+    theatres
+    bookings
+
+
+STEP 1 — CREATE THE DATABASE
+------------------------------------------------------------
+
+Open MySQL Workbench and execute:
+
+    CREATE DATABASE IF NOT EXISTS movie_booking_db;
+
+
+STEP 2 — RESTORE THE DATABASE
+------------------------------------------------------------
+
+Open Command Prompt in the project directory containing
+movie_booking.sql.
+
+Run:
+
+    mysql -u root -p movie_booking_db < movie_booking.sql
+
+Enter your MySQL password when prompted.
+
+On Windows, if mysql is not recognized, use:
+
+    "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p movie_booking_db < movie_booking.sql
+
+Adjust the path if MySQL is installed elsewhere.
+
+IMPORTANT:
+The SQL dump recreates project tables with the same names.
+Back up existing data before restoring over a database whose
+current contents you need to preserve.
+
+
+STEP 3 — VERIFY THE DATABASE
+------------------------------------------------------------
+
+Execute these statements in MySQL Workbench:
+
+    USE movie_booking_db;
+
+    SHOW TABLES;
+
+Expected tables:
+
+    customers
+    movies
+    theatres
+    bookings
+
+
+STEP 4 — VERIFY THE RECORD COUNTS
+------------------------------------------------------------
+
+    SELECT COUNT(*) AS total_customers FROM customers;
+
+    SELECT COUNT(*) AS total_movies FROM movies;
+
+    SELECT COUNT(*) AS total_theatres FROM theatres;
+
+    SELECT COUNT(*) AS total_bookings FROM bookings;
+
+Expected dataset counts:
+
+    customers : 20000
+    movies    :   500
+    theatres  :   200
+    bookings  : 20000
+
+    Total     : 40700
+
+
+DATABASE RELATIONSHIPS
+------------------------------------------------------------
+
+    bookings.customer_id -> customers.customer_id
+
+    bookings.movie_id    -> movies.movie_id
+
+    bookings.theatre_id  -> theatres.theatre_id
+
+
+QUERY FILES
+------------------------------------------------------------
+
+After restoring the database, run the query files in this order:
+
+    Simple_queries.txt
+    Medium_queries.txt
+    Hard_queries.txt
+
+Select movie_booking_db before running the queries.
+
+============================================================
+END OF GUIDE
+============================================================
